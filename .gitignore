@@ -1,0 +1,7 @@
+/bin/
+.idea/
+classes/
+target/
+activemq-data/
+
+basic-jms-app.iml
