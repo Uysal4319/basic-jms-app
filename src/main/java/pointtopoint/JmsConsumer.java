@@ -1,3 +1,5 @@
+package pointtopoint;
+
 import examples.ConsumerMessageListener;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
@@ -7,7 +9,6 @@ public class JmsConsumer  {
 	private ActiveMQConnectionFactory connectionFactory;
 	private Session session;
 	private MessageConsumer consumer;
-	private final int ackMode = Session.AUTO_ACKNOWLEDGE;
 	private  int consumerCount;
 	private String jmsAddress;
 	private String queueName;
@@ -34,7 +35,7 @@ public class JmsConsumer  {
 			connectionFactory = new ActiveMQConnectionFactory(jmsAddress);
 			
 			connection = connectionFactory.createConnection();
-			session = connection.createSession(false, ackMode);
+			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			Queue queue = session.createQueue(queueName);
 				
 			if(consumerCount==0){

@@ -1,8 +1,12 @@
+package pointtopoint;
+
 import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
+import org.apache.log4j.Logger;
 
 import javax.jms.*;
 
 public class JmsStarter {
+	private static final Logger logger = Logger.getLogger(JmsStarter.class);
 	private static final String jmsAddress = "tcp://localhost:62000";
 	private static final String brokerName = "customerBroker";
 	private static final String queueName = "customerQueue";
@@ -10,17 +14,19 @@ public class JmsStarter {
 	public static void main(String[] args) {
 		JmsBroker broker = null;
 		try {
-			broker = new JmsBroker(jmsAddress, brokerName, true, 62001);	
+			broker = new JmsBroker(jmsAddress, brokerName);	
 			
 			JmsProducer jmsProducer = new JmsProducer(jmsAddress,queueName);
 			
-			new JmsConsumer(jmsAddress,queueName);
+			// Single Consumer
+//			new pointtopoint.JmsConsumer(jmsAddress,queueName);
 			
 			
-//			new JmsMessageBrowser(jmsAddress,queueName).start();
+//			new pointtopoint.JmsMessageBrowser(jmsAddress,queueName).start();
 			
 			//Multiple Consumer
-//			JmsConsumer jmsConsumers = new JmsConsumer(jmsAddress,queueName,4);
+			new JmsConsumer(jmsAddress,queueName,4);
+			
 //			jmsConsumer.start();
 					
 			
@@ -28,7 +34,7 @@ public class JmsStarter {
 				Thread.sleep(1);
 				String payload = "Message - " +i ;
 				Message msg = jmsProducer.setText(payload);
-				System.out.println("Sending text '" + payload + "'");
+				logger.info("Sending text '" + payload + "'");
 				jmsProducer.getProducer().send(msg);
 				
 			}

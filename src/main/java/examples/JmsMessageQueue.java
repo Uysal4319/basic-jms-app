@@ -3,17 +3,20 @@ package examples;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.log4j.Logger;
 
 import javax.jms.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class JmsMessageQueueExample {
+public class JmsMessageQueue {
 	private static final String jmsAddress = "tcp://localhost:61616";
 	private static final String brokerName = "customerBroker";
 	private static final String queueName = "customerQueue";
+	private static final Logger logger = Logger.getLogger(JmsMessageQueue.class);
 	
 	public static void main(String[] args) throws URISyntaxException, Exception {
+		
 		BrokerService broker = BrokerFactory.createBroker(new URI(
 				"broker:(tcp://localhost:61616)"));
 		broker.start();
@@ -30,15 +33,15 @@ public class JmsMessageQueueExample {
 			String payload = "Important Task";
 			Message msg = session.createTextMessage(payload);
 			MessageProducer producer = session.createProducer(queue);
-			System.out.println("Sending text '" + payload + "'");
+			logger.info("Sending text '" + payload + "'");
 			producer.send(msg);
 			
 			// Consumer
 			MessageConsumer consumer = session.createConsumer(queue);
 			connection.start();
 			TextMessage textMsg = (TextMessage) consumer.receive();
-			System.out.println(textMsg);
-			System.out.println("Received: " + textMsg.getText());
+			logger.info(textMsg);
+			logger.info("Received: " + textMsg.getText());
 			session.close();
 		} finally {
 			if (connection != null) {

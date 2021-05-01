@@ -17,8 +17,11 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.log4j.Logger;
 
-public class JmsBrowseQueueExample {
+public class JmsBrowseQueue {
+	private static final Logger logger = Logger.getLogger(JmsBrowseQueue.class);
+	
 	public static void main(String[] args) throws URISyntaxException, Exception {
 		BrokerService broker = BrokerFactory.createBroker(new URI(
 				"broker:(tcp://localhost:61616)"));
@@ -38,26 +41,26 @@ public class JmsBrowseQueueExample {
 			for (int i = 0; i < 4; i++) {
 				String payload = basePayload + i;
 				Message msg = session.createTextMessage(payload);
-				System.out.println("Sending text '" + payload + "'");
+				logger.info("Sending text '" + payload + "'");
 				producer.send(msg);
 			}
 			
 			MessageConsumer consumer = session.createConsumer(queue);
 			connection.start();
 			
-			System.out.println("Browse through the elements in queue");
+			logger.info("Browse through the elements in queue");
 			QueueBrowser browser = session.createBrowser(queue);
 			Enumeration e = browser.getEnumeration();
 			while (e.hasMoreElements()) {
 				TextMessage message = (TextMessage) e.nextElement();
-				System.out.println("Get [" + message.getText() + "]");
+				logger.info("Get [" + message.getText() + "]");
 			}
-			System.out.println("Done");
+			logger.info("Done");
 			browser.close();
 			
 			TextMessage textMsg = (TextMessage) consumer.receive();
-			System.out.println(textMsg);
-			System.out.println("Received: " + textMsg.getText());
+			logger.info(textMsg);
+			logger.info("Received: " + textMsg.getText());
 			session.close();
 		} finally {
 			if (connection != null) {

@@ -1,5 +1,7 @@
 package examples;
 
+import org.apache.log4j.Logger;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -7,6 +9,8 @@ import javax.jms.TextMessage;
 
 public class ConsumerMessageListener implements MessageListener {
 	private String consumerName;
+	private static final Logger logger = Logger.getLogger(JmsBrowseQueue.class);
+	
 	public ConsumerMessageListener(String consumerName) {
 		this.consumerName = consumerName;
 	}
@@ -14,9 +18,9 @@ public class ConsumerMessageListener implements MessageListener {
 	public void onMessage(Message message) {
 		TextMessage textMessage = (TextMessage) message;
 		try {
-			System.out.println(consumerName + " received " + textMessage.getText());
+			logger.info(consumerName + " received " + textMessage.getText());
 		} catch (JMSException e) {
-			e.printStackTrace();
+			logger.error("consume error" , e);
 		}
 	}
 	

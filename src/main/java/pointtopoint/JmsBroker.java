@@ -1,3 +1,5 @@
+package pointtopoint;
+
 import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.log4j.Logger;
@@ -8,13 +10,9 @@ public class JmsBroker extends Thread {
 	private Object lock;
 	private static final Logger logger = Logger.getLogger(JmsBroker.class);
 	
-	public JmsBroker(String jmsAddress, String brokerName, boolean useJmx, int jmxPort) throws MessagingException {
+	public JmsBroker(String jmsAddress, String brokerName) throws MessagingException {
 		broker = new BrokerService();
 		broker.setBrokerName(brokerName);
-		broker.setUseJmx(useJmx);
-		if (useJmx && jmxPort != -1) {
-			broker.getManagementContext().setConnectorPort(jmxPort);
-		}
 		broker.setSchedulerSupport(false);
 		broker.setUseLoggingForShutdownErrors(true);
 		broker.setPersistent(false);

@@ -1,13 +1,15 @@
+package pointtopoint;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.log4j.Logger;
 
 import javax.jms.*;
 import java.util.Enumeration;
 
 public class JmsMessageBrowser extends Thread {
-	
+	private static final Logger logger = Logger.getLogger(JmsMessageBrowser.class);
 	private ActiveMQConnectionFactory connectionFactory;
 	private Session session;
-	private final int ackMode = Session.AUTO_ACKNOWLEDGE;
 	private QueueBrowser browser;
 	private Queue queue;
 
@@ -32,7 +34,7 @@ public class JmsMessageBrowser extends Thread {
 			connectionFactory = new ActiveMQConnectionFactory(jmsAddress);
 			
 			connection = connectionFactory.createConnection();
-			session = connection.createSession(false, ackMode);
+			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			Queue queue = session.createQueue(queueName);
 			browser = session.createBrowser(queue);
 			
@@ -52,17 +54,17 @@ public class JmsMessageBrowser extends Thread {
 	
 	public void run() {
 		try {
-			System.out.println("Browser Started.");
+			logger.info("Browser Started.");
 			while (true) {
 				Enumeration e = browser.getEnumeration();
 				while (e.hasMoreElements()) {
 					TextMessage message = (TextMessage) e.nextElement();
-					System.out.println("Get [" + message.getText() + "]");
+					logger.info("Get [" + message.getText() + "]");
 				}
 				Thread.sleep(1);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Thread exception : ", e);
 		}
 	}
 	
